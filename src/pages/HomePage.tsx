@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams,useNavigate } from 'react-router-dom';
 import {
   fetchProducts,
   fetchProductsByCategory,
@@ -8,6 +8,8 @@ import ProductList from '../components/ProductList';
 import SearchBar from '../components/SearchBar';
 import FilterPanel from '../components/FilterPanel';
 import Pagination from '../components/Pagination';
+import { useCompareStore } from '@store/useCompareStore';
+
 
 type Product = {
   id: number;
@@ -25,6 +27,15 @@ function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const pageFromUrl = parseInt(searchParams.get('page') || '1', 10);
   const [currentPage, setCurrentPageState] = useState(pageFromUrl);
+
+  const compareList = useCompareStore((s) => s.compareList);
+  const navigate = useNavigate();
+
+  const handleCompareClick = () => {
+    if (compareList.length >= 2) {
+      navigate('/compare');
+    }
+  };
 
   const itemsPerPage = 8;
 
@@ -74,6 +85,18 @@ function HomePage() {
         }}
       />
 
+        <button
+          disabled={compareList.length < 2}
+          onClick={handleCompareClick}
+          className={`flex justify-start ml-3.5 text-sm px-3 py-1 rounded ${
+            compareList.length < 2
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-yellow-500 hover:bg-yellow-600 text-black'
+          }`}
+        >
+          Сравнить товары
+        </button>
+        
       {loading ? (
         <p className="p-4">Загрузка товаров...</p>
       ) : (

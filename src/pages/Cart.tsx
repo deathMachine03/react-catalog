@@ -1,4 +1,5 @@
 import { useCartStore } from '@store/useCartStore';
+import { Link } from 'react-router-dom';
 import ProductList from '../components/ProductList';
 import CartDropZone from '../components/CartDropZone';
 
@@ -11,7 +12,13 @@ function Cart() {
 
       <CartDropZone>
         {cart.length === 0 ? (
-          <p className="text-gray-500">Товары в корзине</p>
+          <div className=" max-w-4xl mx-auto text-center text-gray-500">
+          <p className="text-gray-500">Товары в корзине отсутсвуют</p>
+        <Link to="/catalog" className="text-blue-600 hover:underline mt-4 block">
+          ← Вернуться в каталог
+        </Link>
+          </div>
+
         ) : (
           <ProductList products={cart} inCart />
         )}

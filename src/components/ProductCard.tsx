@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useCartStore } from '@store/useCartStore';
+import { useCompareStore } from '@store/useCompareStore';
 import { toast } from 'react-toastify';
 import { useDrag } from 'react-dnd';
 import type { FC } from 'react';
@@ -11,6 +12,7 @@ type Product = {
   price: number;
   image: string;
   quantity?: number;
+  category: string;
 };
 
 type Props = {
@@ -33,6 +35,12 @@ const ProductCard: FC<Props> = ({ product, inCart = false }) => {
     removeFromCart(product.id);
     toast.info('Товар удалён из корзины');
   };
+
+  const compareList = useCompareStore((s) => s.compareList);
+  const addToCompare = useCompareStore((s) => s.addToCompare);
+  const removeFromCompare = useCompareStore((s) => s.removeFromCompare);
+
+  const isCompared = compareList.some((p) => p.id === product.id);
 
   const ref = useRef<HTMLDivElement | null>(null);
   const [, drag] = useDrag(() => ({
@@ -87,6 +95,16 @@ const ProductCard: FC<Props> = ({ product, inCart = false }) => {
             В корзину
           </button>
         )}
+        <button
+          onClick={() =>
+            isCompared ? removeFromCompare(product.id) : addToCompare(product)
+          }
+          className={`text-xs px-2 py-1 rounded ${
+            isCompared ? 'bg-yellow-500 text-black' : 'bg-gray-200'
+          }`}
+        >
+          {isCompared ? 'Убрать из сравнения' : 'Добавить для сравнения'}
+        </button>
       </div>
     </div>
   );
